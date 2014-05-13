@@ -18,3 +18,8 @@ function card(value, suit) {
 	this.suit = suit;
 	value < 10 ? this.points = value : this.points = 10;
 }
+
+function newGame() {
+	var c = confirm("Are you sure you wish to begin a new game?")
+	if(c) $("#content").empty().append("");
+}

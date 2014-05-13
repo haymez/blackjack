@@ -6,13 +6,15 @@
 
 	<!--CSS Files-->
 	<link rel="stylesheet" href="css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/master.css">
 </head>
 
 <body>
 	<div class="nav" style="border:1px solid #EBFFC2;background-color:rgb(221, 221, 221)">
 		<h1>Welcome to Lucky 21!</h1>
 		<ul class="nav nav-pills">
-			<li class="active"><a href="#">New Game</a></li>
+			<li class="active"><a href="javascript:newGame()">New Game</a></li>
+			<li><a href="#">Save Game</a></li>
 			<li><a href="#">Load Game</a></li>
 			<li class="dropdown">
 				<a class="dropdown-toggle" data-toggle="dropdown" href="#">
@@ -26,8 +28,8 @@
 		</ul>
 	</div>
 
-	<div class="well">
-		<div id="content" class="row"></div>
+	<div class="well table">
+		<div id="content" class="row"><h1>Press "New Game" to begin playing Blackjack 21.</h1></div>
 	</div>
 </body>
 
