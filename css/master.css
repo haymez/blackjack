@@ -1,6 +1,6 @@
 body
 {
-	
+	background-color: #40a040;
 }
 
 .table
@@ -11,4 +11,37 @@ body
 .Centered
 {
 	text-align: center;
+}
+
+.dealer
+{
+	background-color: #338033;
+	min-height: 150px;
+}
+
+.player
+{
+	background-color: #66B366;
+	min-height: 150px;
+}
+
+.noPad
+{
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+.controls
+{
+	background-color: #79BC79;
+}
+
+.game-info
+{
+	float:right;
+}
+
+.cards
+{
+	float:left;
 }
