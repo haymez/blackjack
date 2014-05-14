@@ -33,12 +33,14 @@ body
 
 .controls
 {
-	background-color: #79BC79;
+	background-color: #AFD7AF;
 }
 
 .game-info
 {
 	float:right;
+	background-color: #AFD7AF;
+	margin-right: 15px;
 }
 
 .cards
