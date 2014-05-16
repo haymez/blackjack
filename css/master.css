@@ -47,3 +47,10 @@ body
 {
 	float:left;
 }
+
+.temp
+{
+	font-size: 650%;
+	position: absolute;
+	padding-left: 43%;
+}
