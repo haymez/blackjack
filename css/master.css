@@ -48,9 +48,17 @@ body
 	float:left;
 }
 
-.temp
+.small-temp
 {
 	font-size: 650%;
 	position: absolute;
-	padding-left: 43%;
+	padding-left: 35%;
+}
+
+.large-temp
+{
+	font-size: 500%;
+	position: absolute;
+	top:0%;
+	right:15%;
 }

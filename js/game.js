@@ -33,10 +33,13 @@ function card(points, number) {
 	else this.points = 11;
 }
 
-//This function starts a new game of Blackjack
-function newGame() {
-	var c = confirm("Are you sure you wish to begin a new game?")
-	if(c) {
+/* newRound - This function starts a new round of Blackjack
+ * @param  {Boolean} newGame - If True, user will be prompted if they really want to start new game
+ *                             If False, a new round will be started
+ */
+function newRound(newGame) {
+	if(newGame) var c = confirm("Are you sure you wish to begin a new game?")
+	if(c || !newGame) {
 		$("#content").empty().append("\
 		<h2 class='Centered noPad'>BlackJack</h2>\
 		\
@@ -59,9 +62,9 @@ function newGame() {
 		<div class='controls Centered'>\
 			<h4 class='Centered'>Player Controls</h4>\
 			<div class='btn-group' style='margin-bottom:5px;'>\
-				<button class='btn btn-lg btn-success' onclick='deal();'>Deal</button>\
-				<button class='btn btn-lg btn-primary' onclick='hitMe();'>Hit</button>\
-				<button class='btn btn-lg btn-warning' onclick='stand();'>Stand</button>\
+				<button id='dealButton' class='btn btn-lg btn-success' onclick='deal();'>Deal</button>\
+				<button id='hitButton' class='btn btn-lg btn-primary' onclick='hitMe();'>Hit</button>\
+				<button id='standButton' class='btn btn-lg btn-warning' onclick='stand();'>Stand</button>\
 			</div>\
 		</div>");
 
@@ -75,20 +78,31 @@ function newGame() {
 		dealerPoints = 0;
 		playerPoints = 0;
 		updateCount(false); //update player points
+		buttonState(true, false, false);
+		if(!newGame) {
+			deal();
+		}
 	}
 }
 
 //Handles dealing two cards to each player
 function deal() {
-	var i = 0;
-	var delay = setInterval(function() {
-		if(i%2 == 0) dealCard("player", getNewCard());
-		else {
-			dealCard("dealer", getNewCard());
-		}
-		i++;
-		if(i == 4) clearInterval(delay);
-	}, 500)
+	if(dealerPoints == 0) {
+		var i = 0;
+		var delay = setInterval(function() {
+			if(i%2 == 0) dealCard("player", getNewCard());
+			else {
+				dealCard("dealer", getNewCard());
+			}
+			i++;
+			if(i == 4) {
+				clearInterval(delay);
+				buttonState(false, true, true);
+			}
+		}, 500)
+	} else {
+		newRound(false);
+	}
 }
 
 /* dealCard - Handles dealing a single card to a specified player
@@ -118,6 +132,7 @@ function hitMe() {
 }
 
 function stand() {
+	buttonState(false, false, false);
 	dealer();
 }
 
@@ -153,13 +168,19 @@ function updateCount(updateDealer) {
 		dealerDiv.empty().append("<h3>" + dealerPoints + "</h3>");
 		//dealer has busted
 		if(dealerPoints > 21) {
-			bust("dealer");
+			messageOverlay("dealer", "Bust!");
+			buttonState(true, false, false);
+			endRound(evaluate());
 		}
 	}
 	playerDiv.empty().append("<h3>" + playerPoints + "</h3>");
 	//player has busted
 	if(playerPoints > 21) {
-		bust("player");
+		$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
+		$("#dealerInfo").empty().append("<h3>" + dealerPoints + "</h3>")
+		messageOverlay("player", "Bust!");
+		buttonState(true, false, false);
+		endRound(evaluate());
 	}
 }
 
@@ -171,25 +192,63 @@ function dealer() {
 		var delay = setInterval(function() {
 			dealCard("dealer", getNewCard());
 			updateCount(true);
-			if(dealerPoints >= 17) clearInterval(delay);
+			if(dealerPoints >= 17) {
+				clearInterval(delay);
+				endRound(evaluate());
+			}
 		}, 1000)
+	} else endRound(evaluate());
+}
+
+/* messageOverlay - Handles overlaying messages on specified players mat for a temporary period of time
+ * @param  {String} name    - Name of player
+ * @param  {String} message - Message to display
+ */
+function messageOverlay(name, message) {
+	if(name == "player") {
+		$(".player").append("<h1 class='small-temp'>" + message + "</h1>");
+		setTimeout(function() { $(".small-temp").fadeOut(1000); }, 1000);
+		setTimeout(function() { $(".small-temp").remove(); }, 2000);
+	} else if(name == "dealer") {
+		$(".dealer").append("<h1 class='small-temp'>" + message + "</h1>");
+		setTimeout(function() { $(".small-temp").fadeOut(1000); }, 1000);
+		setTimeout(function() { $(".small-temp").remove(); }, 2000);
+	} else if(name == "large") {
+		$("#content").append("<h1 class='large-temp'>" + message + "</h1>");
+		setTimeout(function() { $(".large-temp").fadeOut(2000); }, 1000);
+		setTimeout(function() { $(".large-temp").remove(); }, 3000);
 	}
 }
 
-/* bust - Handles when players or dealer bust
- * @param  {String} name - name of player ("player" or "dealer")
+/* buttonState - Activates / deactivates butons based on booleans provided
+ * @param  {Boolean} deal  - If false, this button will be disabled. If True, it will be enabled.
+ * @param  {Boolean} hit   - If false, this button will be disabled. If True, it will be enabled.
+ * @param  {Boolean} stand - If false, this button will be disabled. If True, it will be enabled.
+ * @return {[type]}       [description]
  */
-function bust(name) {
-	$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
-	$("#dealerInfo").empty().append("<h3>" + dealerPoints + "</h3>")
-	if(name == "player") {
-		var playerDiv = $(".player");
-		playerDiv.append("<h1 class='temp'>Bust!</h1>");
-		setTimeout(function() { $(".temp").fadeOut(1000); }, 1000);
+function buttonState(deal, hit, stand) {
+	$("#dealButton").attr("disabled", !deal);
+	$("#hitButton").attr("disabled", !hit);
+	$("#standButton").attr("disabled", !stand);
+}
+
+/* evaluate - Returns True is dealer won the round. False otherwise
+ * @return {Boolean} - Boolean that determines who won the round
+ */
+function evaluate() {
+	if(playerPoints > 21) return true;
+	if(dealerPoints > 21) return false;
+	return dealerPoints > playerPoints;
+}
+
+/* endRound - Handles what happens at the end of a round
+ * @param  {Boolean} eval - If true, dealer has won the round. If false, player has won round.
+ */
+function endRound(eval) {
+	if(eval) {
+		messageOverlay("large", "Dealer Wins!");
 	} else {
-		var dealerDiv = $(".dealer");
-		dealerDiv.append("<h1 class='temp'>Bust!</h1>");
-		setTimeout(function() { $(".temp").fadeOut(1000); }, 1000);
+		messageOverlay("large", "Player Wins!");
 	}
-	setTimeout(function() { $(".temp").remove(); }, 2000);
+	buttonState(true, false, false);
 }
