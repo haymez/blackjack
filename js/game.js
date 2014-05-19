@@ -12,6 +12,8 @@ var dealerPoints = 0;
 var dealerPoints = 0;
 var dealerAces = 0;
 var playerAces = 0;
+var bank = 1000;
+var bet = 10;
 
 for(var i = 0; i < 13; i++) {
 	cards.push(new card(i+2, i*4));
@@ -38,13 +40,16 @@ function card(points, number) {
  *                             If False, a new round will be started
  */
 function newRound(newGame) {
-	if(newGame) var c = confirm("Are you sure you wish to begin a new game?")
+	var c = false;
+	if(newGame) {
+		c = confirm("Are you sure you wish to begin a new game?");
+	}
 	if(c || !newGame) {
 		$("#content").empty().append("\
-		<h2 class='Centered noPad'>BlackJack</h2>\
+		<h1 class='Centered noPad faded'>BlackJack</h1>\
 		\
 		<div class='dealer Centered'>\
-			<h4 class='Centered'>Dealer</h4>\
+			<h4 class='Centered faded'>Dealer</h4>\
 			<div id='dealer' class='cards'></div>\
 			<div id='dealerInfo' class='game-info well'>\
 				<h3>0</h3>\
@@ -52,7 +57,7 @@ function newRound(newGame) {
 		</div>\
 		\
 		<div class='player Centered'>\
-			<h4 class='Centered'>Player</h4>\
+			<h4 class='Centered faded'>Player</h4>\
 			<div id= 'player' class='cards'></div>\
 			<div id='playerInfo' class='game-info well'>\
 				<h3>0</h3>\
@@ -60,16 +65,17 @@ function newRound(newGame) {
 		</div>\
 		\
 		<div class='controls Centered'>\
-			<h4 class='Centered'>Player Controls</h4>\
-			<div class='btn-group' style='margin-bottom:5px;'>\
-				<button id='dealButton' class='btn btn-lg btn-success' onclick='deal();'>Deal</button>\
-				<button id='hitButton' class='btn btn-lg btn-primary' onclick='hitMe();'>Hit</button>\
-				<button id='standButton' class='btn btn-lg btn-warning' onclick='stand();'>Stand</button>\
+			<h4 class='Centered faded'>Player Controls</h4>\
+			<div style='margin-bottom:5px;'>\
+				<button id='dealButton' class='btn btn-lg btn-success buttons' onclick='deal();'>Deal</button>\
+				<button id='hitButton' class='btn btn-lg btn-primary buttons' onclick='hitMe();'>Hit</button>\
+				<button id='standButton' class='btn btn-lg btn-warning buttons' onclick='stand();'>Stand</button>\
 			</div>\
 		</div>");
 
 		//Reinitialize variables to starting states
-		deck = cards;
+		deck = 0;
+		deck = cards.slice(0);
 		playerCards = new Array();
 		dealerCards = new Array();
 		playerHandNum = 0;
@@ -82,6 +88,9 @@ function newRound(newGame) {
 		if(!newGame) {
 			deal();
 		}
+	}
+	if(newGame) {
+		//reset bets and current 
 	}
 }
 
@@ -227,9 +236,12 @@ function messageOverlay(name, message) {
  * @return {[type]}       [description]
  */
 function buttonState(deal, hit, stand) {
-	$("#dealButton").attr("disabled", !deal);
-	$("#hitButton").attr("disabled", !hit);
-	$("#standButton").attr("disabled", !stand);
+	if($("#dealButton").is(":hidden") && deal) $("#dealButton").show(500);
+	else if(!deal) $("#dealButton").hide(500);
+	if($("#hitButton").is(":hidden") && hit) $("#hitButton").show(500);
+	else if(!hit) $("#hitButton").hide(500);
+	if($("#standButton").is(":hidden") && stand) $("#standButton").show(500);
+	else if(!stand) $("#standButton").hide(500);
 }
 
 /* evaluate - Returns True is dealer won the round. False otherwise
