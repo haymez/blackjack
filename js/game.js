@@ -52,7 +52,7 @@ function newRound(newGame) {
 			<h4 class='Centered faded'>Dealer</h4>\
 			<div id='dealer' class='cards'></div>\
 			<div id='dealerInfo' class='game-info well'>\
-				<h3>0</h3>\
+				<h3>Points: 0</h3>\
 			</div>\
 		</div>\
 		\
@@ -67,6 +67,7 @@ function newRound(newGame) {
 		<div class='controls Centered'>\
 			<h4 class='Centered faded'>Player Controls</h4>\
 			<div style='margin-bottom:5px;'>\
+				<div id='bank' class='bank'></div>\
 				<button id='dealButton' class='btn btn-lg btn-success buttons' onclick='deal();'>Deal</button>\
 				<button id='hitButton' class='btn btn-lg btn-primary buttons' onclick='hitMe();'>Hit</button>\
 				<button id='standButton' class='btn btn-lg btn-warning buttons' onclick='stand();'>Stand</button>\
@@ -84,6 +85,7 @@ function newRound(newGame) {
 		dealerPoints = 0;
 		playerPoints = 0;
 		updateCount(false); //update player points
+		updateBank(); //Update players funds
 		buttonState(true, false, false);
 		if(!newGame) {
 			deal();
@@ -123,14 +125,14 @@ function dealCard(name, cardObj) {
 		$("<img id='player"+(playerHandNum)+"' style='display:none;' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#player").fadeIn(500);
 		playerCards.push(cardObj);
 		playerHandNum++;
-		playerAces++;
+		if(cardObj.points == 11) playerAces++;
 	} else {	
 		if(dealerCards.length > 0)	
 			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#dealer").fadeIn(500);
 		else
 			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' src=images/b2fv.png></img>").appendTo("#dealer").fadeIn(500);
 		dealerCards.push(cardObj);
-		dealerAces++;
+		if(cardObj.points == 11) dealerAces++;
 	}
 	updateCount(false);
 }
@@ -174,23 +176,48 @@ function updateCount(updateDealer) {
 		playerPoints += playerCards[i].points;
 	}
 	if(updateDealer) {
-		dealerDiv.empty().append("<h3>" + dealerPoints + "</h3>");
+		dealerDiv.empty().append("<h3>Points: " + dealerPoints + "</h3>");
 		//dealer has busted
 		if(dealerPoints > 21) {
-			messageOverlay("dealer", "Bust!");
+			//Make sure player doesn't have any aces that can change to 1 point value
+			if(dealerAces > 0) {
+				dealerAces--;
+				for(var i = 0; i < dealerCards.length; i++) {
+					if(dealerCards[i].points == 11) {
+						dealerCards[i].points = 1;
+						break;
+					}
+				}
+				updateCount(true);
+			} else {
+				messageOverlay("dealer", "Bust!");
+				buttonState(true, false, false);
+				endRound(evaluate());
+			}
+		}
+	}
+	playerDiv.empty().append("<h3>Points: " + playerPoints + "</h3>");
+	//player has busted
+	if(playerPoints > 21) {
+		//Make sure player doesn't have any aces that can change to 1 point value
+		if(playerAces > 0) {
+			playerAces--;
+			for(var i = 0; i < playerCards.length; i++) {
+				if(playerCards[i].points == 11) {
+					playerCards[i].points = 1;
+					break;
+				}
+			}
+			updateCount(false);
+		} else {
+			$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
+			$("#dealerInfo").empty().append("<h3>" + dealerPoints + "</h3>")
+			messageOverlay("player", "Bust!");
 			buttonState(true, false, false);
 			endRound(evaluate());
 		}
 	}
-	playerDiv.empty().append("<h3>" + playerPoints + "</h3>");
-	//player has busted
-	if(playerPoints > 21) {
-		$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
-		$("#dealerInfo").empty().append("<h3>" + dealerPoints + "</h3>")
-		messageOverlay("player", "Bust!");
-		buttonState(true, false, false);
-		endRound(evaluate());
-	}
+	if(playerPoints == 21 && playerCards.length == 2 && dealerPoints < 21) $("#standButton").trigger("click");
 }
 
 //Handles logic for the dealer choosing to hit or stand
@@ -244,23 +271,42 @@ function buttonState(deal, hit, stand) {
 	else if(!stand) $("#standButton").hide(500);
 }
 
-/* evaluate - Returns True is dealer won the round. False otherwise
+/* evaluate - Returns 0 if dealer won the round, 1 if player one, 2 if push
  * @return {Boolean} - Boolean that determines who won the round
  */
 function evaluate() {
-	if(playerPoints > 21) return true;
-	if(dealerPoints > 21) return false;
-	return dealerPoints > playerPoints;
+	if(playerPoints > 21) return 0;
+	if(dealerPoints > 21) return 1;
+	if(dealerPoints == playerPoints) return 2;
+	if(dealerPoints > playerPoints) return 0;
+	else return 1;
 }
 
 /* endRound - Handles what happens at the end of a round
  * @param  {Boolean} eval - If true, dealer has won the round. If false, player has won round.
  */
 function endRound(eval) {
-	if(eval) {
+	if(eval == 0) {
 		messageOverlay("large", "Dealer Wins!");
+		bank -= bet;
+	} else if(eval == 1) {
+		if(playerPoints == 21 && playerCards.length == 2) {
+			messageOverlay("large", "Player gets a Natural!");
+			bank += bet*1.5;
+		}
+		else {
+			messageOverlay("large", "Player Wins!");
+			bank += bet;
+		}
 	} else {
-		messageOverlay("large", "Player Wins!");
+		messageOverlay("large", "Push!");
 	}
+	updateBank();
 	buttonState(true, false, false);
+}
+
+//Updates the players funds
+function updateBank() {
+	var playerBank = $("#bank");
+	playerBank.empty().append("<h2>Bet: $" + bet + ".  Funds: $" + bank + "</h2>")
 }

@@ -57,10 +57,16 @@ body
 
 .large-temp
 {
+	/*color:black;
 	font-size: 500%;
 	position: absolute;
 	top:0%;
-	right:25%;
+	right:25%;*/
+	color:black;
+	font-size: 850%;
+	position: absolute;
+	top:32%;
+	right:30%;
 }
 
 .buttons
@@ -72,4 +78,10 @@ body
 .faded
 {
 	opacity:.6;
+}
+
+.bank
+{
+	color: black;
+	padding-right: 5%;
 }
