@@ -50,6 +50,7 @@ body
 
 .small-temp
 {
+	opacity: .3;
 	font-size: 650%;
 	position: absolute;
 	padding-left: 35%;
@@ -57,11 +58,6 @@ body
 
 .large-temp
 {
-	/*color:black;
-	font-size: 500%;
-	position: absolute;
-	top:0%;
-	right:25%;*/
 	color:black;
 	font-size: 850%;
 	position: absolute;
