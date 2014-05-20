@@ -99,6 +99,7 @@ function newRound(newGame) {
 //Handles dealing two cards to each player
 function deal() {
 	if(dealerPoints == 0) {
+		buttonState(false, false, false);
 		var i = 0;
 		var delay = setInterval(function() {
 			if(i%2 == 0) dealCard("player", getNewCard());
