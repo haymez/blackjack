@@ -91,8 +91,11 @@ function newRound(newGame) {
 			deal();
 		}
 	}
+	//reset bets and current funds
 	if(newGame) {
-		//reset bets and current 
+		bank = 1000;
+		bet = 10;
+		updateBank();
 	}
 }
 
