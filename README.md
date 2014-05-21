@@ -13,5 +13,6 @@ Uses JQuery and Bootstrap libraries.
 * Split
 * Insurance
 
-###Bugs
+###Bugs/Issues
 * JQuery call stack issue
+* Images are too large
