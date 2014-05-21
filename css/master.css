@@ -16,13 +16,13 @@ body
 .dealer
 {
 	background-color: #338033;
-	min-height: 150px;
+	min-height: 170px;
 }
 
 .player
 {
 	background-color: #66B366;
-	min-height: 150px;
+	min-height: 170px;
 }
 
 .noPad

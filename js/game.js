@@ -71,6 +71,8 @@ function newRound(newGame) {
 				<button id='dealButton' class='btn btn-lg btn-success buttons' onclick='deal();'>Deal</button>\
 				<button id='hitButton' class='btn btn-lg btn-primary buttons' onclick='hitMe();'>Hit</button>\
 				<button id='standButton' class='btn btn-lg btn-warning buttons' onclick='stand();'>Stand</button>\
+				<button id='incButton' class='btn btn-lg btn-info buttons' onclick='changeBet(5);'>+ Bet</button>\
+				<button id='decButton' class='btn btn-lg btn-info buttons' onclick='changeBet(-5);'>- Bet</button>\
 			</div>\
 		</div>");
 
@@ -86,7 +88,7 @@ function newRound(newGame) {
 		playerPoints = 0;
 		updateCount(false); //update player points
 		updateBank(); //Update players funds
-		buttonState(true, false, false);
+		buttonState(true, false, false, true, true);
 		if(!newGame) {
 			deal();
 		}
@@ -102,7 +104,7 @@ function newRound(newGame) {
 //Handles dealing two cards to each player
 function deal() {
 	if(dealerPoints == 0) {
-		buttonState(false, false, false);
+		buttonState(false, false, false, false, false);
 		var i = 0;
 		var delay = setInterval(function() {
 			if(i%2 == 0) dealCard("player", getNewCard());
@@ -112,7 +114,7 @@ function deal() {
 			i++;
 			if(i == 4) {
 				clearInterval(delay);
-				buttonState(false, true, true);
+				buttonState(false, true, true, false, false);
 			}
 		}, 500)
 	} else {
@@ -126,15 +128,15 @@ function deal() {
  */
 function dealCard(name, cardObj) {
 	if(name == "player") {
-		$("<img id='player"+(playerHandNum)+"' style='display:none;' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#player").fadeIn(500);
+		$("<img id='player"+(playerHandNum)+"' style='display:none;' width='90px' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#player").fadeIn(500);
 		playerCards.push(cardObj);
 		playerHandNum++;
 		if(cardObj.points == 11) playerAces++;
 	} else {	
 		if(dealerCards.length > 0)	
-			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#dealer").fadeIn(500);
+			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' width='90px' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#dealer").fadeIn(500);
 		else
-			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' src=images/b2fv.png></img>").appendTo("#dealer").fadeIn(500);
+			$("<img id='dealer"+(dealerCards.length)+"' style='display:none;' width='90px' src=images/back.png></img>").appendTo("#dealer").fadeIn(500);
 		dealerCards.push(cardObj);
 		if(cardObj.points == 11) dealerAces++;
 	}
@@ -147,7 +149,7 @@ function hitMe() {
 }
 
 function stand() {
-	buttonState(false, false, false);
+	buttonState(false, false, false, false, false);
 	dealer();
 }
 
@@ -183,8 +185,8 @@ function updateCount(updateDealer) {
 		dealerDiv.empty().append("<h3>Points: " + dealerPoints + "</h3>");
 		//dealer has busted
 		if(dealerPoints > 21) {
-			//Make sure player doesn't have any aces that can change to 1 point value
-			if(dealerAces > 0) {
+			//Make sure dealer doesn't have any aces that can change to 1 point value
+			if(dealerAces > 0 && dealerPoints < 32) {
 				dealerAces--;
 				for(var i = 0; i < dealerCards.length; i++) {
 					if(dealerCards[i].points == 11) {
@@ -195,8 +197,8 @@ function updateCount(updateDealer) {
 				updateCount(true);
 			} else {
 				messageOverlay("dealer", "Bust!");
-				buttonState(true, false, false);
-				endRound(evaluate());
+				buttonState(true, false, false, true, true);
+				//endRound(evaluate());
 			}
 		}
 	}
@@ -204,7 +206,7 @@ function updateCount(updateDealer) {
 	//player has busted
 	if(playerPoints > 21) {
 		//Make sure player doesn't have any aces that can change to 1 point value
-		if(playerAces > 0) {
+		if(playerAces > 0 && playerPoints < 32) {
 			playerAces--;
 			for(var i = 0; i < playerCards.length; i++) {
 				if(playerCards[i].points == 11) {
@@ -217,7 +219,7 @@ function updateCount(updateDealer) {
 			$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
 			$("#dealerInfo").empty().append("<h3>" + dealerPoints + "</h3>")
 			messageOverlay("player", "Bust!");
-			buttonState(true, false, false);
+			buttonState(true, false, false, true, true);
 			endRound(evaluate());
 		}
 	}
@@ -264,15 +266,21 @@ function messageOverlay(name, message) {
  * @param  {Boolean} deal  - If false, this button will be disabled. If True, it will be enabled.
  * @param  {Boolean} hit   - If false, this button will be disabled. If True, it will be enabled.
  * @param  {Boolean} stand - If false, this button will be disabled. If True, it will be enabled.
+ * @param  {Boolean} inc - If false, this button will be disabled. If True, it will be enabled.
+ * @param  {Boolean} dec - If false, this button will be disabled. If True, it will be enabled.
  * @return {[type]}       [description]
  */
-function buttonState(deal, hit, stand) {
+function buttonState(deal, hit, stand, inc, dec) {
 	if($("#dealButton").is(":hidden") && deal) $("#dealButton").show(500);
 	else if(!deal) $("#dealButton").hide(500);
 	if($("#hitButton").is(":hidden") && hit) $("#hitButton").show(500);
 	else if(!hit) $("#hitButton").hide(500);
 	if($("#standButton").is(":hidden") && stand) $("#standButton").show(500);
 	else if(!stand) $("#standButton").hide(500);
+	if($("#incButton").is(":hidden") && inc) $("#incButton").show(500);
+	else if(!inc) $("#incButton").hide(500);
+	if($("#decButton").is(":hidden") && dec) $("#decButton").show(500);
+	else if(!dec) $("#decButton").hide(500);
 }
 
 /* evaluate - Returns 0 if dealer won the round, 1 if player one, 2 if push
@@ -306,11 +314,21 @@ function endRound(eval) {
 		messageOverlay("large", "Push!");
 	}
 	updateBank();
-	buttonState(true, false, false);
+	buttonState(true, false, false, true, true);
 }
 
-//Updates the players funds
+//Updates the players funds on screen
 function updateBank() {
 	var playerBank = $("#bank");
 	playerBank.empty().append("<h2>Bet: $" + bet + ".  Funds: $" + bank + "</h2>")
+}
+
+/* changeBet - changes the bet by value
+ * @param  {Number} value - The amount to change bet (5 would add 5 to bet. -5 would take 5 away.)
+ */
+function changeBet(value) {
+	if(bet+value <= bank && bet+value >  0) {
+		bet += value;
+		updateBank();
+	}
 }
