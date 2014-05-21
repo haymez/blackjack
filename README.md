@@ -1,6 +1,6 @@
 #**Blackjack 21**
 
-This is a simple game written in JavaScript.
+This is a simple blackjack game written in JavaScript.
 
 Uses JQuery and Bootstrap libraries. 
 
