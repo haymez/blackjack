@@ -1,6 +1,8 @@
 #**Blackjack 21**
 
-This is a simple game written in JavaScript, using the JQuery and Bootstrap libraries. 
+This is a simple game written in JavaScript.
+
+Uses JQuery and Bootstrap libraries. 
 
 ##Current features
 * Hit
