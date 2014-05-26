@@ -14,6 +14,7 @@ var dealerAces = 0;
 var playerAces = 0;
 var bank = 1000;
 var bet = 10;
+var debug = true;
 
 for(var i = 0; i < 13; i++) {
 	cards.push(new card(i+2, i*4));
@@ -40,6 +41,7 @@ function card(points, number) {
  *                             If False, a new round will be started
  */
 function newRound(newGame) {
+	if(debug) console.log("newRound");
 	var c = false;
 	if(newGame) {
 		c = confirm("Are you sure you wish to begin a new game?");
@@ -94,7 +96,7 @@ function newRound(newGame) {
 		}
 	}
 	//reset bets and current funds
-	if(newGame) {
+	if(c == true) {
 		bank = 1000;
 		bet = 10;
 		updateBank();
@@ -103,6 +105,7 @@ function newRound(newGame) {
 
 //Handles dealing two cards to each player
 function deal() {
+	if(debug) console.log("deal");
 	if(dealerPoints == 0) {
 		buttonState(false, false, false, false, false);
 		var i = 0;
@@ -127,6 +130,7 @@ function deal() {
  * @param  {Object} cardObj - Card Object that contains card points, and position in deck.
  */
 function dealCard(name, cardObj) {
+	if(debug) console.log("dealCard");
 	if(name == "player") {
 		$("<img id='player"+(playerHandNum)+"' style='display:none;' width='90px' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#player").fadeIn(500);
 		playerCards.push(cardObj);
@@ -157,6 +161,7 @@ function stand() {
  * @return {Object/Boolean} - Card object that hasn't been used yet. If no cards remain, False is returned.
  */
 function getNewCard() {
+	if(debug) console.log("getNewCard");
 	if(deck.length > 0) {
 		var index = Math.floor(Math.random()*deck.length);
 		var obj = deck[index];
@@ -171,6 +176,7 @@ function getNewCard() {
  *                                	If False, only Player is updated.
  */
 function updateCount(updateDealer) {
+	if(debug) console.log("UpdateCount");
 	var dealerDiv = $("#dealerInfo");
 	var playerDiv = $("#playerInfo");
 	dealerPoints = 0;
@@ -228,6 +234,7 @@ function updateCount(updateDealer) {
 
 //Handles logic for the dealer choosing to hit or stand
 function dealer() {
+	if(debug) console.log("dealer");
 	updateCount(true);
 	$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
 	if(dealerPoints < 17) {
@@ -287,6 +294,7 @@ function buttonState(deal, hit, stand, inc, dec) {
  * @return {Boolean} - Boolean that determines who won the round
  */
 function evaluate() {
+	if(debug) console.log("evaluate");
 	if(playerPoints > 21) return 0;
 	if(dealerPoints > 21) return 1;
 	if(dealerPoints == playerPoints) return 2;
@@ -298,6 +306,7 @@ function evaluate() {
  * @param  {Boolean} eval - If true, dealer has won the round. If false, player has won round.
  */
 function endRound(eval) {
+	if(debug) console.log("endRound");
 	if(eval == 0) {
 		messageOverlay("large", "Dealer Wins!");
 		bank -= bet;
@@ -319,6 +328,7 @@ function endRound(eval) {
 
 //Updates the players funds on screen
 function updateBank() {
+	if(debug) console.log("updateBank");
 	var playerBank = $("#bank");
 	playerBank.empty().append("<h2>Bet: $" + bet + ".  Funds: $" + bank + "</h2>")
 }
@@ -327,6 +337,7 @@ function updateBank() {
  * @param  {Number} value - The amount to change bet (5 would add 5 to bet. -5 would take 5 away.)
  */
 function changeBet(value) {
+	if(debug) console.log("changeBet");
 	if(bet+value <= bank && bet+value >  0) {
 		bet += value;
 		updateBank();
