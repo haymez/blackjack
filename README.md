@@ -14,6 +14,5 @@ Uses JQuery and Bootstrap libraries.
 * Insurance
 
 ###Bugs/Issues
-* JQuery call stack issue
-* Game lets player deal with bet that's higher then player's funds should allow
-* Getting a natural results in 12 points instead of 21 (Sometimes)
+* JQuery call stack issue (indeterminate)
+* Sometimes Aces change from 11 points to 1 when they shouldn't.

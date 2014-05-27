@@ -14,7 +14,8 @@ var dealerAces = 0;
 var playerAces = 0;
 var bank = 1000;
 var bet = 10;
-var debug = true;
+var debug = false; //Controls whether or not consoles will be displayed.
+var dealerCalled = false; //changes to true once dealer() gets called once
 
 for(var i = 0; i < 13; i++) {
 	cards.push(new card(i+2, i*4));
@@ -91,6 +92,7 @@ function newRound(newGame) {
 		updateCount(false); //update player points
 		updateBank(); //Update players funds
 		buttonState(true, false, false, true, true);
+		dealerCalled = false;
 		if(!newGame) {
 			deal();
 		}
@@ -106,6 +108,12 @@ function newRound(newGame) {
 //Handles dealing two cards to each player
 function deal() {
 	if(debug) console.log("deal");
+	//Player does not have enough funds to play with this bet.
+	if(bank < bet) {
+		alert("You do not have enough funds to continue playing at current bet. Please start a new game " + 
+			"or decrease your bet.");
+		return;
+	}
 	if(dealerPoints == 0) {
 		buttonState(false, false, false, false, false);
 		var i = 0;
@@ -235,6 +243,8 @@ function updateCount(updateDealer) {
 //Handles logic for the dealer choosing to hit or stand
 function dealer() {
 	if(debug) console.log("dealer");
+	if(dealerCalled == true) return; //Makes sure this is the first time this is being called this deal.
+	dealerCalled = true;
 	updateCount(true);
 	$("#dealer0").attr("src", "images/" + (52-dealerCards[0].number) + ".png")
 	if(dealerPoints < 17) {
