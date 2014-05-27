@@ -241,6 +241,7 @@ function dealer() {
 		var delay = setInterval(function() {
 			dealCard("dealer", getNewCard());
 			updateCount(true);
+			$("#dealerDiv").empty().append("<h3>Points: " + dealerPoints + "</h3>"); //update dealers points on screen
 			if(dealerPoints >= 17) {
 				clearInterval(delay);
 				endRound(evaluate());
@@ -263,7 +264,7 @@ function messageOverlay(name, message) {
 		setTimeout(function() { $(".small-temp").fadeOut(1000); }, 1000);
 		setTimeout(function() { $(".small-temp").remove(); }, 2000);
 	} else if(name == "large") {
-		$("#content").append("<h1 class='large-temp'>" + message + "</h1>");
+		$("#content").append("<h1 class='large-temp col-md-offset-4 col-sm-offset 4 col-xs-offset-3'>" + message + "</h1>");
 		setTimeout(function() { $(".large-temp").fadeOut(2000); }, 1000);
 		setTimeout(function() { $(".large-temp").remove(); }, 3000);
 	}
