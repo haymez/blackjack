@@ -14,7 +14,7 @@ var dealerAces = 0;
 var playerAces = 0;
 var bank = 1000;
 var bet = 10;
-var debug = true; //Controls whether or not consoles will be displayed.
+var debug = false; //Controls whether or not consoles will be displayed.
 var dealerCalled = false; //changes to true once dealer() gets called once
 var numDecks = 7;
 
@@ -81,7 +81,7 @@ var newGame = function() {
 		}
 
 	}
-})
+}
 
 
 /* card - Structure for card object
@@ -197,7 +197,6 @@ function deal() {
  * @param  {Object} cardObj - Card Object that contains card points, and position in deck.
  */
 function dealCard(name, cardObj) {
-	console.group("dealCard");
 	if(debug) console.log("dealCard");
 	if(name == "player") {
 		$("<img id='player"+(playerHandNum)+"' style='display:none;' width='90px' src=images/" + (52-cardObj.number) + ".png></img>").appendTo("#player").fadeIn(500);
@@ -213,7 +212,6 @@ function dealCard(name, cardObj) {
 		if(cardObj.points == 11) dealerAces++;
 	}
 	updateCount(false);
-	console.groupEnd("dealCard");
 }
 
 //Deals the player one more card
@@ -245,7 +243,6 @@ function getNewCard() {
  *                                	If False, only Player is updated.
  */
 function updateCount(updateDealer) {
-	console.group("updateCount");
 	if(debug) console.log("UpdateCount");
 	var dealerDiv = $("#dealerInfo");
 	var playerDiv = $("#playerInfo");
@@ -284,7 +281,6 @@ function updateCount(updateDealer) {
 	}
 	playerDiv.empty().append("<h3>Points: " + playerPoints + "</h3>");
 	//player has busted
-	console.log("PlayerPoints: ", playerPoints);
 	if(playerPoints > 21) {
 		//Make sure player doesn't have any aces that can change to 1 point value
 		if(playerAces > 0 && playerPoints < 32) {
@@ -305,7 +301,6 @@ function updateCount(updateDealer) {
 		}
 	}
 	if(playerPoints == 21 && playerCards.length == 2 && dealerPoints < 21) $("#standButton").trigger("click");
-	console.groupEnd("updateCount");
 }
 
 //checks to see if dealer has busted
@@ -322,7 +317,6 @@ function hasDealerBusted() {
 
 //Handles logic for the dealer choosing to hit or stand
 function dealer() {
-	console.group("dealer");
 	if(debug) console.log("dealer");
 	if(dealerCalled == true) return; //Makes sure this is the first time this is being called this deal.
 	dealerCalled = true;
@@ -339,7 +333,6 @@ function dealer() {
 			}
 		}, 1000)
 	} else endRound(evaluate());
-	console.groupEnd("updateCount");
 }
 
 /* messageOverlay - Handles overlaying messages on specified players mat for a temporary period of time
