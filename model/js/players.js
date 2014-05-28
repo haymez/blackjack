@@ -1,5 +1,5 @@
 /**
- * This file handles the logic behind the game
+ * This file contains the model for players
  */
 
 //Global Variables
@@ -16,16 +16,7 @@ var bank = 1000;
 var bet = 10;
 var debug = false; //Controls whether or not consoles will be displayed.
 var dealerCalled = false; //changes to true once dealer() gets called once
-var numDecks = 7;
 
-for(var j = 0; j < numDecks; j++) {
-	for(var i = 0; i < 13; i++) {
-		cards.push(new card(i+2, i*4));
-		cards.push(new card(i+2, i*4+1));
-		cards.push(new card(i+2, i*4+2));
-		cards.push(new card(i+2, i*4+3));
-	}
-}
 
 var createPlayer = function(funds){
 	return {
@@ -54,35 +45,6 @@ var createPlayer = function(funds){
 	}
 };
 
-var newGame = function() {
-	return {
-		dealer : createPlayer(),
-		players: [],
-		deck: function() {
-			var cards = [];
-
-		},
-		deal: function() {
-
-		},
-		dealCard: function() {
-
-		},
-		currentPlayerIndex: 0,
-		currentPlayer: function() {
-			if(this.currentPlayerIndex < this.players.length)
-				return this.players[this.currentPlayerIndex];
-			else
-				return this.dealer;
-		},
-		nextPlayer: function() {
-			this.currentPlayerIndex++;
-			return this.currentPlayer();
-		}
-
-	}
-}
-
 
 /* card - Structure for card object
  * @param  {Number} points - The point value of the current card
@@ -95,74 +57,7 @@ function card(points, number) {
 	else this.points = 11;
 }
 
-/* newRound - This function starts a new round of Blackjack
- * @param  {Boolean} newGame - If True, user will be prompted if they really want to start new game
- *                             If False, a new round will be started
- */
-function newRound(newGame) {
-	if(debug) console.log("newRound");
-	var c = false;
-	if(newGame) {
-		c = confirm("Are you sure you wish to begin a new game?");
-	}
-	if(c || !newGame) {
-		$("#content").empty().append("\
-		<h1 class='Centered noPad faded'>BlackJack</h1>\
-		\
-		<div class='dealer Centered'>\
-			<h4 class='Centered faded'>Dealer</h4>\
-			<div id='dealer' class='cards'></div>\
-			<div id='dealerInfo' class='game-info well'>\
-				<h3>Points: 0</h3>\
-			</div>\
-		</div>\
-		\
-		<div class='player Centered'>\
-			<h4 class='Centered faded'>Player</h4>\
-			<div id= 'player' class='cards'></div>\
-			<div id='playerInfo' class='game-info well'>\
-				<h3>0</h3>\
-			</div>\
-		</div>\
-		\
-		<div class='controls Centered'>\
-			<h4 class='Centered faded'>Player Controls</h4>\
-			<div style='margin-bottom:5px;'>\
-				<div id='bank' class='bank'></div>\
-				<button id='dealButton' class='btn btn-lg btn-success buttons' onclick='deal();'>Deal</button>\
-				<button id='hitButton' class='btn btn-lg btn-primary buttons' onclick='hitMe();'>Hit</button>\
-				<button id='standButton' class='btn btn-lg btn-warning buttons' onclick='stand();'>Stand</button>\
-				<button id='incButton' class='btn btn-lg btn-info buttons' onclick='changeBet(5);'>+ Bet</button>\
-				<button id='decButton' class='btn btn-lg btn-info buttons' onclick='changeBet(-5);'>- Bet</button>\
-				<button id='insButton' class='btn btn-lg btn-default buttons' onclick='insurance();'>Insurance</button>\
-			</div>\
-		</div>");
 
-		//Reinitialize variables to starting states
-		deck = 0;
-		deck = cards.slice(0);
-		playerCards = new Array();
-		dealerCards = new Array();
-		playerHandNum = 0;
-		dealerAces = 0;
-		playerAces = 0;
-		dealerPoints = 0;
-		playerPoints = 0;
-		updateCount(false); //update player points
-		updateBank(); //Update players funds
-		buttonState(true, false, false, true, true, false);
-		dealerCalled = false;
-		if(!newGame) {
-			deal();
-		}
-	}
-	//reset bets and current funds
-	if(c == true) {
-		bank = 1000;
-		bet = 10;
-		updateBank();
-	}
-}
 
 //Handles dealing two cards to each player
 function deal() {
